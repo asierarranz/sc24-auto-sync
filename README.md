@@ -2,6 +2,8 @@
 
 `sc24-auto-sync` is a suite of tools designed for SC24 to streamline the management of generative AI images. It includes automated file synchronization scripts and a web-based photo gallery for selecting images that will be displayed on a VideoWall. 
 
+<img width="933" alt="image" src="https://github.com/user-attachments/assets/9eb7b04c-655e-496e-9531-2b8c0eefa98e">
+
 ## Requirements
 
 ### General Requirements
