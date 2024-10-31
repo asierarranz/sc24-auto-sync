@@ -1,1 +1,5 @@
-*.txt
+sync_upload/config_upload.txt
+sync_download/config_download.txt
+upload_log.txt
+download_log.txt
+.venv/
