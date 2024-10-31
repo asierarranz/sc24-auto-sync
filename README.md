@@ -55,8 +55,8 @@ Create a `config_upload.txt` file in the same directory as `sync_upload.py`:
 hostname=SERVER_IP
 username=YOUR_USERNAME
 password=YOUR_PASSWORD
-remote_folder=/path/to/remote/upload_folder
-local_folder=C:/path/to/local/upload_folder
+remote_folder=/root/sc24_images
+local_folder=C:/path/to/local/upload_folder/ComfyUI
 ```
 
 #### `config_download.txt` (For `sync_download.py`)
@@ -67,8 +67,8 @@ Create a `config_download.txt` file in the same directory as `sync_download.py`:
 hostname=SERVER_IP
 username=YOUR_USERNAME
 password=YOUR_PASSWORD
-remote_folder=/path/to/remote/download_folder
-local_folder=C:/path/to/local/download_folder
+remote_folder=/root/sc24_images/videowall
+local_folder=C:/path/to/local/download_folder/where/videowall/reads/the/files
 ```
 
 ### 4. Ensure Local Folders Exist
