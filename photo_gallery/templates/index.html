@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Gallery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Photo Gallery</h1>
+        <p>Select and print the images you like!</p>
+    </header>
+    
+    <main>
+        <div class="gallery">
+            {% for image in images %}
+                <div class="image-card">
+                    <p class="timestamp">{{ image.modified_time }}</p>
+                    <img src="{{ url_for('serve_image', filename=image.filename) }}" alt="Image">
+                    <div class="buttons">
+                        <button 
+                            class="btn {% if image.in_videowall %}in-videowall{% else %}send-to-videowall{% endif %}"
+                            onclick="toggleVideoWall('{{ image.filename }}', this)"
+                        >
+                            {% if image.in_videowall %}
+                                VideoWall ❌
+                            {% else %}
+                                Send to VideoWall
+                            {% endif %}
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <script>
+        function toggleVideoWall(filename, button) {
+            fetch(`/send_to_videowall/${filename}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.in_videowall) {
+                        button.textContent = 'VideoWall ❌';
+                        button.classList.remove('send-to-videowall');
+                        button.classList.add('in-videowall');
+                    } else {
+                        button.textContent = 'Send to VideoWall';
+                        button.classList.remove('in-videowall');
+                        button.classList.add('send-to-videowall');
+                    }
+                })
+                .catch(error => console.error('Error toggling image in VideoWall:', error));
+        }
+    </script>
+</body>
+</html>
