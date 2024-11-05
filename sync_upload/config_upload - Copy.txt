@@ -1,0 +1,5 @@
+hostname=159.65.251.174
+username=root
+password=sc24nvidiaWWW
+remote_folder=/root/sc24_images
+local_folder=C:\Users\asier\ComfyUI_windows_portable\ComfyUI\output

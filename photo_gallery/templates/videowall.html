@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VideoWall 3D</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/IdeaSpaceVR/aframe-particle-system-component/dist/aframe-particle-system-component.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background: url('static/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- A-Frame Scene without VR Mode -->
+    <a-scene vr-mode-ui="enabled: false" renderer="alpha: true">
+        <!-- Ambient and directional lights for images -->
+        <a-entity light="type: ambient; color: #666"></a-entity>
+        <a-entity light="type: directional; color: #fff; intensity: 1.5" position="1 2 -1"></a-entity>
+
+        <!-- Sistema de partículas actualizado -->
+        <a-entity
+            particle-system="preset: dust;
+                             particleCount: 5000;
+                             size: 0.05;
+                             sizeSpread: 0.01;
+                             color: #FFFFFF;
+                             opacity: 0.8;
+                             velocity: 0 0 0;
+                             velocitySpread: 0.001 0.001 0.001;
+                             acceleration: 0 0 0;
+                             accelerationSpread: 0 0 0;
+                             positionSpread: 20 20 20;">
+        </a-entity>
+
+        <!-- JavaScript to dynamically add images with borders and animations -->
+        <script>
+            const images = {{ images | tojson }};
+            const colors = ["#FFFFFF"]; // Bordes blancos
+            const borderOpacity = 0.8; // 80% de opacidad
+            const imagesPerRow = 4;
+            const imageHeight = 1.5;
+            const imageWidth = 1;
+            const maxFloatOffset = 0.03; // Desplazamiento máximo por animación
+            const additionalMargin = 0.1; // Margen adicional entre imágenes
+
+            // Calcular el espaciado vertical (rowHeight)
+            const rowHeight = imageHeight + (maxFloatOffset * 2) + additionalMargin; // 1.7
+
+            // Calcular el espaciado horizontal (horizontalSpacing)
+            const horizontalSpacing = imageWidth + (maxFloatOffset * 2) + additionalMargin; // 1.16
+
+            // Calcular el número de filas
+            const numRows = Math.ceil(images.length / imagesPerRow);
+
+            // Calcular el índice de la fila central
+            const middleRowIndex = Math.floor((numRows - 1) / 2);
+
+            // Posicionar la cámara en la altura correspondiente a la fila central
+            const cameraY = middleRowIndex * rowHeight;
+
+            // Posicionar la cámara
+            const cameraEntity = document.createElement('a-entity');
+            cameraEntity.setAttribute('camera', '');
+            cameraEntity.setAttribute('position', `0 ${cameraY} 1.5`);
+            cameraEntity.setAttribute('look-controls', '');
+            cameraEntity.setAttribute('wasd-controls', 'acceleration: 200');
+            document.querySelector('a-scene').appendChild(cameraEntity);
+
+            images.forEach((image, index) => {
+                const color = colors[0]; // Blanco para todos los bordes
+
+                // Calcular posición
+                const rowIndex = Math.floor(index / imagesPerRow);
+                const xPos = (index % imagesPerRow) * horizontalSpacing - ((imagesPerRow - 1) * horizontalSpacing) / 2;
+                const yPos = cameraY - (rowIndex - middleRowIndex) * rowHeight;
+
+                // Crear entidad de imagen
+                const imgEntity = document.createElement('a-entity');
+                imgEntity.setAttribute('geometry', {
+                    primitive: 'plane',
+                    height: imageHeight,
+                    width: imageWidth
+                });
+                imgEntity.setAttribute('material', {
+                    src: `/videowall_images/${image}`,
+                    shader: 'flat',
+                    opacity: 1
+                });
+                imgEntity.setAttribute('position', `${xPos} ${yPos} -1`); // Acercamos las imágenes en Z
+                imgEntity.setAttribute('look-at', '[camera]');
+
+                // Añadir borde a la imagen
+                const borderSize = 0.1; // Tamaño del borde
+                const borderEntity = document.createElement('a-plane');
+                borderEntity.setAttribute('geometry', {
+                    height: imageHeight + borderSize,
+                    width: imageWidth + borderSize
+                });
+                borderEntity.setAttribute('material', {
+                    color: color,
+                    opacity: borderOpacity,
+                    shader: 'flat'
+                });
+                borderEntity.setAttribute('position', '0 0 -0.01');
+                imgEntity.appendChild(borderEntity);
+
+                document.querySelector('a-scene').appendChild(imgEntity);
+
+                // Animación flotante con movimiento suave
+                const floatOffset = maxFloatOffset;
+                setInterval(() => {
+                    const xOffset = floatOffset * Math.sin(Date.now() * 0.0005 + index);
+                    const yOffset = floatOffset * Math.cos(Date.now() * 0.0003 + index);
+                    const zOffset = floatOffset * Math.sin(Date.now() * 0.0002 + index);
+                    imgEntity.setAttribute('position', `${xPos + xOffset} ${yPos + yOffset} ${-1 + zOffset}`);
+                }, 50);
+            });
+        </script>
+    </a-scene>
+</body>
+</html>

@@ -5,6 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Gallery</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function toggleVideoWall(event, filename) {
+            event.preventDefault();
+            fetch(`/send_to_videowall/${filename}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    // Toggle button text and style based on current state
+                    const button = event.target;
+                    if (button.innerText === "Send to VideoWall") {
+                        button.innerText = "VideoWall ❌";
+                        button.classList.add('in-videowall');
+                    } else {
+                        button.innerText = "Send to VideoWall";
+                        button.classList.remove('in-videowall');
+                    }
+                })
+                .catch(error => alert('Error toggling VideoWall status'));
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -19,39 +39,15 @@
                     <p class="timestamp">{{ image.modified_time }}</p>
                     <img src="{{ url_for('serve_image', filename=image.filename) }}" alt="Image">
                     <div class="buttons">
-                        <button 
-                            class="btn {% if image.in_videowall %}in-videowall{% else %}send-to-videowall{% endif %}"
-                            onclick="toggleVideoWall('{{ image.filename }}', this)"
-                        >
-                            {% if image.in_videowall %}
-                                VideoWall ❌
-                            {% else %}
-                                Send to VideoWall
-                            {% endif %}
+                        <!-- Button that toggles based on whether the image is in the VideoWall folder -->
+                        <button onclick="toggleVideoWall(event, '{{ image.filename }}')"
+                                class="btn {% if image.is_in_videowall %}in-videowall{% endif %}">
+                            {% if image.is_in_videowall %}VideoWall ❌{% else %}Send to VideoWall{% endif %}
                         </button>
                     </div>
                 </div>
             {% endfor %}
         </div>
     </main>
-
-    <script>
-        function toggleVideoWall(filename, button) {
-            fetch(`/send_to_videowall/${filename}`, { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.in_videowall) {
-                        button.textContent = 'VideoWall ❌';
-                        button.classList.remove('send-to-videowall');
-                        button.classList.add('in-videowall');
-                    } else {
-                        button.textContent = 'Send to VideoWall';
-                        button.classList.remove('in-videowall');
-                        button.classList.add('send-to-videowall');
-                    }
-                })
-                .catch(error => console.error('Error toggling image in VideoWall:', error));
-        }
-    </script>
 </body>
 </html>

@@ -75,21 +75,20 @@ header p {
 /* Timestamp - small and subtle, positioned in the top right */
 .timestamp {
     font-size: 0.5rem;
-    font-style: normal;
     color: rgba(100, 100, 100, 0.8);
     position: absolute;
-    top: 3px;
-    right: 18px;
+    top: 3px;           /* Spacing from the top */
+    right: 18px;        /* Distance from the right */
     padding: 1px 3px;
     border-radius: 2px;
     font-family: 'NVIDIA', Arial, sans-serif;
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Buttons container for center alignment and Polaroid-style spacing */
+/* Button container */
 .buttons {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
 }
 
 /* General button styling */
@@ -100,26 +99,26 @@ header p {
     text-decoration: none;
     color: #FFF;
     font-weight: bold;
+    text-align: center;
     font-family: 'NVIDIA', Arial, sans-serif;
     cursor: pointer;
-    text-align: center;
-    position: relative;
 }
 
-/* Styling for the "Send to VideoWall" button */
-.send-to-videowall {
-    background-color: #4300B9; /* Blue for Send to VideoWall */
+/* "Send to VideoWall" button - default state */
+.btn:not(.in-videowall) {
+    background-color: #4300B9; /* Medium Blue */
+    font-size: 0.8rem;
 }
 
-.send-to-videowall:hover {
-    background-color: #6006FF; /* Hover effect for Send to VideoWall */
+.btn:not(.in-videowall):hover {
+    background-color: #6006FF; /* Persian Indigo on hover */
 }
 
-/* Styling for the "VideoWall ❌" button (already in VideoWall) */
-.in-videowall {
-    background-color: #76B900; /* Green for VideoWall */
+/* "VideoWall ❌" button - in VideoWall state */
+.btn.in-videowall {
+    background-color: #76B900; /* NVIDIA Green */
 }
 
-.in-videowall:hover {
-    background-color: #456D00; /* Darker green on hover */
+.btn.in-videowall:hover {
+    background-color: #456D00; /* Dark Olive Green */
 }
