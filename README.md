@@ -102,6 +102,67 @@ The `sync_download.py` script periodically checks the `videowall` folder on the 
 python sync_download.py
 ```
 
+### Web Server Configuration
+To host the photo gallery using Nginx, use the following configuration steps. This setup serves Flask on port 8000 via Nginx.
+
+#### Install Nginx (if not installed)
+
+```bash
+sudo apt update
+sudo apt install nginx
+```
+
+#### Configure Nginx to Serve the Gallery
+Create a configuration file:
+
+```bash
+sudo nano /etc/nginx/sites-available/flask_app
+```
+
+Add the following configuration, replacing `[YOUR_SERVER_IP]`
+
+```nginx
+server {
+    listen 80;
+    server_name [YOUR_SERVER_IP];
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /static/ {
+        alias /root/photo_gallery/static/;
+    }
+
+    error_page 404 /404.html;
+    location = /404.html {
+        internal;
+    }
+
+    location /favicon.ico {
+        alias /root/photo_gallery/static/favicon.ico;
+    }
+}
+```
+
+#### Enable the Nginx Configuration
+
+```bash
+sudo ln -s /etc/nginx/sites-available/flask_app /etc/nginx/sites-enabled
+```
+
+#### Restart Nginx
+
+```bash
+sudo systemctl restart nginx
+```
+
+
+
 ### Running the Photo Gallery App
 
 The gallery is hosted on the server and accessible via the server’s IP address in a browser. To run it in the background (e.g., using `screen`):
